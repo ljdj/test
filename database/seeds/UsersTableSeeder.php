@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
 class UsersTableSeeder extends Seeder
@@ -15,7 +16,7 @@ class UsersTableSeeder extends Seeder
             \Illuminate\Support\Facades\DB::table('users')->insert([
                 'name' => "JohnDoe$i",
                 'email' => "john$i@doe.fr",
-                'password' => bcrypt('0000'),
+                'password' => Hash::make('0000'),
             ]);
         }
     }
