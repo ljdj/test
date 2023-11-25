@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Events\NewMessage;
@@ -9,8 +10,8 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class ConversationsController extends Controller {
-
+class ConversationsController extends Controller
+{
     /**
      * @var ConversationRepository
      */
@@ -21,22 +22,25 @@ class ConversationsController extends Controller {
         $this->conversationRepository = $conversationRepository;
     }
 
-    public function index (Request $request) {
+    public function index(Request $request)
+    {
         $conversations = $this->conversationRepository->getConversations($request->user()->id);
         $unread = $this->conversationRepository->unreadCount($request->user()->id);
-        foreach($conversations as $conversation) {
+        foreach ($conversations as $conversation) {
             if (isset($unread[$conversation->id])) {
                 $conversation->unread = $unread[$conversation->id];
             } else {
                 $conversation->unread = 0;
             }
         }
+
         return [
-            'conversations' => $conversations
+            'conversations' => $conversations,
         ];
     }
 
-    public function show (Request $request, User $user) {
+    public function show(Request $request, User $user)
+    {
         $messagesQuery = $this->conversationRepository
             ->getMessagesFor($request->user()->id, $user->id);
         $count = null;
@@ -47,7 +51,7 @@ class ConversationsController extends Controller {
         }
         $messages = $messagesQuery->limit(10)->get();
         $update = false;
-        foreach($messages as $message) {
+        foreach ($messages as $message) {
             if ($message->read_at === null && $message->to_id === $request->user()->id) {
                 $message->read_at = Carbon::now();
                 if ($update === false) {
@@ -56,22 +60,24 @@ class ConversationsController extends Controller {
                 $update = true;
             }
         }
+
         return [
             'messages' => array_reverse($messages->toArray()),
-            'count'    => $count
+            'count' => $count,
         ];
     }
 
-    public function store (User $user, StoreMessageRequest $request) {
+    public function store(User $user, StoreMessageRequest $request)
+    {
         $message = $this->conversationRepository->createMessage(
             $request->get('content'),
             $request->user()->id,
             $user->id
         );
         broadcast(new NewMessage($message));
+
         return [
-            'message' => $message
+            'message' => $message,
         ];
     }
-
 }
