@@ -10,8 +10,8 @@ class MessagePolicy
 {
     use HandlesAuthorization;
 
-    public function read (User $user, Message $message) {
+    public function read(User $user, Message $message)
+    {
         return $user->id === $message->to_id;
     }
-
 }

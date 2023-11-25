@@ -4,13 +4,13 @@ namespace App\Notifications;
 
 use App\Message;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class MessageReceived extends Notification
 {
     use Queueable;
+
     /**
      * @var Message
      */
@@ -18,8 +18,6 @@ class MessageReceived extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param Message $message
      */
     public function __construct(Message $message)
     {
@@ -46,9 +44,9 @@ class MessageReceived extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line($this->message->from->name . ' vous a envoyé un message')
-                    ->line($this->message->content)
-                    ->action('Voir le message', route('conversations.show', $this->message->from_id));
+            ->line($this->message->from->name.' vous a envoyé un message')
+            ->line($this->message->content)
+            ->action('Voir le message', route('conversations.show', $this->message->from_id));
     }
 
     /**

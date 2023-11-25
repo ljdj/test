@@ -3,17 +3,16 @@
 namespace App\Events;
 
 use App\Message;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class NewMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+
     /**
      * @var Message
      */
@@ -36,16 +35,17 @@ class NewMessage implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('App.User.' . $this->message->to_id);
+        return new PrivateChannel('App.User.'.$this->message->to_id);
     }
 
-    public function broadcastWith () {
+    public function broadcastWith()
+    {
         return [
             'message' => $this->message->load([
                 'from' => function ($query) {
                     $query->select('id', 'name');
-                }
-            ])->toArray()
+                },
+            ])->toArray(),
         ];
     }
 }
